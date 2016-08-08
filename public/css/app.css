@@ -1,0 +1,46 @@
+ul#policies-list {
+  padding-left: 0px;
+  margin: 0;
+}
+ul#policies-list > li {
+  border: 1px solid #efefef;
+  padding: 20px;
+  margin: 15px 0;
+  background: #f8f8f8;
+  list-style: none;
+}
+ul#policies-list > li:hover {
+  background: #efefef;
+}
+ul#policies-list > li > a {
+  font-size: 1.3em;
+}
+ul#policies-list > li li {
+  list-style-type: disc;
+}
+.propertiesList .add-property-btn {
+  margin: 10px 0 0 0;
+}
+#delete-property-btn {
+  float: left;
+}
+.modal-dialog .remove-header-btn {
+  float: right;
+}
+.modal-dialog .add-header-btn {
+  margin-top: 5px;
+}
+.headers .row {
+  margin-bottom: 10px;
+}
+#policies-container {
+  border-bottom: 1px #efefef solid;
+  margin-bottom: 15px;
+}
+textarea.form-control {
+  height: 150px;
+}
+h3,
+h4 {
+  margin-top: 0px;
+}
