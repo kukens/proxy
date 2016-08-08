@@ -19,12 +19,13 @@ module.exports.init = function () {
                         match.properties.forEach(function (item) {
 
                             proxyText += 'if (url === "' + item.url + '") { \
-                             return "PROXY 127.0.0.1:8081"; \
+                             return "PROXY 54.172.216.254:8081"; \
                           }';
                         });
                     
                 }
                 //return "PROXY 54.172.216.254:8081"; \
+                //return "PROXY 127.0.0.1:8081"; \
 
 
                 proxyText += 'return "DIRECT";}';
