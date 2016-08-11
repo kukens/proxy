@@ -19,6 +19,7 @@ module.exports.init = function () {
         console.log(ctx.clientToProxyRequest.headers.wptproxypolicy);
         console.log(fullUrl);
 
+        ctx.proxyToClientResponse.end("dupa sraka");
 
         Policy.findOne({ _id: ctx.clientToProxyRequest.headers.wptproxypolicy, 'properties.url': fullUrl }, {"properties.$": 1, _id: 0}).exec(function (err, match) {
 
@@ -49,7 +50,7 @@ module.exports.init = function () {
                 }
             }
 
-            return callback();
+            //return callback();
 
         });
     });
