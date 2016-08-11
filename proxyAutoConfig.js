@@ -11,25 +11,26 @@ module.exports.init = function () {
 
                 var proxyText = 'function FindProxyForURL(url, host) {';
 
-                if (err) {
-                    console.error(err);
-                }
-                else {
+                //if (err) {
+                //    console.error(err);
+                //}
+                //else {
                    
 
-                        match.properties.forEach(function (item) {
+                //        match.properties.forEach(function (item) {
 
-                            proxyText += 'if (url === "' + item.url + '") { \
-                             return "PROXY 54.172.216.254:8081"; \
-                          }';
-                        });
+                //            proxyText += 'if (url === "' + item.url + '") { \
+                //            return "PROXY 127.0.0.1:8081"; \
+                //          }';
+                //        });
                     
-                }
+                //}
+
                 //return "PROXY 54.172.216.254:8081"; \
                 //return "PROXY 127.0.0.1:8081"; \
 
 
-                proxyText += 'return "DIRECT";}';
+                proxyText += 'return "PROXY 54.172.216.254:8081";}';
 
                 response.setHeader('content-type', 'application/x-ns-proxy-autoconfig');
                 response.end(proxyText);

@@ -10,9 +10,6 @@ module.exports.init = function () {
         console.error('proxy error:', err);
     });
 
-    proxy.onRequest(function (ctx, callback) {
-        return callback();
-    });
 
     proxy.onRequest(function (ctx, callback) {
 
