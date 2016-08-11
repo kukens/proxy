@@ -11,6 +11,9 @@ module.exports.init = function () {
 
                 var proxyText = 'function FindProxyForURL(url, host) {';
 
+                proxyText += 'if (host == "localhost" || shExpMatch(host, "localhost.*") || host == "127.0.0.1") { \
+                    return "DIRECT" \
+                }';
                 //if (err) {
                 //    console.error(err);
                 //}
