@@ -6,19 +6,22 @@ var proxy = Proxy();
 
 module.exports.init = function () {
 
-    proxy.onError(function (ctx, err) {
-        console.error('proxy error:', err);
-    });
+    // curl -k https://localhost:8000/
+    const https = require('https');
+    const fs = require('fs');
 
+    const options = {
+        key: fs.readFileSync('server.key'),
+        cert: fs.readFileSync('server.cert')
+    };
 
-    proxy.onRequest(function (ctx, callback) {
-
-        ctx.proxyToClientResponse.end("dupa sraka");
-
-            //return callback();
-    });
-    console.log('Starting proxy server...')
-    proxy.listen({ port: 8081, keepAlive: true });
+    https.createServer(options, (req, res) => {
+        console.log(options);
+        console.log(req);
+        console.log('dupa');
+      //  res.writeHead(200);
+        res.end('hello world\n');
+    }).listen(8081);;
 
 }
 
