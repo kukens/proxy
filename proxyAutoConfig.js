@@ -11,6 +11,9 @@ module.exports.init = function () {
 
                 var proxyText = 'function FindProxyForURL(url, host) {';
 
+                proxyText += 'if (host == "localhost" || shExpMatch(host, "localhost.*") || host == "127.0.0.1") { \
+                    return "DIRECT" \
+                }';
                 //if (err) {
                 //    console.error(err);
                 //}
@@ -30,7 +33,7 @@ module.exports.init = function () {
                 //return "PROXY 127.0.0.1:8081"; \
 
 
-                proxyText += 'return "PROXY 54.172.216.254:8081";}';
+                proxyText += 'return "HTTPS 54.172.216.254:8081";}';
 
                 response.setHeader('content-type', 'application/x-ns-proxy-autoconfig');
                 response.end(proxyText);
