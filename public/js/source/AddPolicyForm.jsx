@@ -30,6 +30,9 @@ module.exports = React.createClass({
                     <fieldset>
                         <label htmlFor="name">Policy name:</label>
                         <input className="form-control" onChange={this.handleNameChange} id="alias" type="text" name="name" value={this.state.name} />
+
+                        <label htmlFor="name">Test URL:</label>
+                        <input className="form-control" onChange={this.handleNameChange} id="alias" type="text" name="testUrl" value={this.state.testUrl} />
                     </fieldset>
                     </div>
 

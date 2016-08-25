@@ -7,11 +7,25 @@ propertySchema = new Schema({
     headers: [{ name: String, value: String }]
 });
 
+responseSchema = new Schema({
+    url: String,
+    path: String,
+    headers: [],
+    body: Buffer,
+    bodyUrl: String,
+});
+
+
 policySchema = new Schema({
     _id: { type: Schema.ObjectId, auto: true },
     name: String,
+    testUrl: String,
+    tests: [],
     properties: [propertySchema]
 });
+
+
+
 
 
 policySchema.statics.editProperty = function (property, callback) {

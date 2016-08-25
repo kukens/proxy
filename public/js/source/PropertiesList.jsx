@@ -31,6 +31,9 @@ module.exports = React.createClass({
                   {propertiesNodes}
               </ul>
                 {noPropertiesText}
+
+                                <button type="button" onClick={this.renderAddPropertyForm} className="btn btn-primary">Run test</button>
+                 <button type="button" onClick={this.renderAddPropertyForm} className="btn btn-primary">Tests history</button>
                 <button type="button" onClick={this.renderAddPropertyForm} className="add-property-btn btn btn-primary">+ Add property</button>
             </div>
 

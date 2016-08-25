@@ -20,12 +20,16 @@ module.exports = React.createClass({
     },
 
     getInitialState: function () {
-        return { name: this.props.policyName };
+        return {
+            name: this.props.policyName,
+            testUrl: this.props.testUrl
+        };
     },
 
     componentWillReceiveProps: function (nextProps) {
         this.setState({
-            name: nextProps.policyName
+            name: nextProps.policyName,
+            testUrl: nextProps.testUrl
         });
     },
 
@@ -37,12 +41,16 @@ module.exports = React.createClass({
                     <h3>Edit policy</h3>
                     <p>Edit policy '{this.props.policyName}' (ID: {this.props.policyId}). </p>
                 </div>
-                                <div className="modal-body">
+                <div className="modal-body">
                     <fieldset>
                         <label htmlFor="alias">Policy name:</label>
                         <input className="form-control" onChange={this.handleNameChange} id="alias" type="text" name="name" value={this.state.name} />
+
+                        <label htmlFor="testUrl">Test URL:</label>
+                        <input className="form-control" onChange={this.handleTestUrlChange} id="testUrl" type="text" name="name" value={this.state.testUrl} />
+
                     </fieldset>
-                                </div>
+                </div>
 
                     <div className="modal-footer">
 
