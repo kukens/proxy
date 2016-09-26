@@ -3,6 +3,7 @@ var ReactDOM = require('react-dom');
 var AddPropertyForm = require('./AddPropertyForm.jsx');
 var EditPropertyForm = require('./EditPropertyForm.jsx');
 var EditPropertyLink = require('./EditPropertyLink.jsx');
+var TestsSummary = require('./TestsSummary.jsx');
 
 module.exports = React.createClass({
 
@@ -13,6 +14,7 @@ module.exports = React.createClass({
 
         $('#modal-window').modal('show');
     },
+
 
     render: function () {
         var propertiesNodes = this.props.policy.properties.map(function (property) {
@@ -26,17 +28,23 @@ module.exports = React.createClass({
         var noPropertiesText = propertiesNodes.length > 0 ? '' : (<p>No properties defined</p>);
 
         return (
+            <div className="row">
+            <div className="col-md-8">
             <div className="propertiesList">
               <ul>
                   {propertiesNodes}
               </ul>
                 {noPropertiesText}
+                 <button type="button" onClick={this.renderAddPropertyForm} className="add-property-btn btn btn-primary">+ Add property</button>
 
-                                <button type="button" onClick={this.renderAddPropertyForm} className="btn btn-primary">Run test</button>
-                 <button type="button" onClick={this.renderAddPropertyForm} className="btn btn-primary">Tests history</button>
-                <button type="button" onClick={this.renderAddPropertyForm} className="add-property-btn btn btn-primary">+ Add property</button>
+                  <br />
+
             </div>
-
+            </div>
+            <div className="col-md-4">
+                <TestsSummary policyId={this.props.policy._id} />
+            </div>
+            </div>
   );
     }
 });

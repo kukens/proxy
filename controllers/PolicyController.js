@@ -1,4 +1,4 @@
-var Policy = require('../models/PolicyModel');
+var Policy = require('../models/mongoose/PolicyModel');
 
 
 var matchPolicyId = function (req) {
@@ -38,7 +38,7 @@ var responseCB = function(err, res)
 
         addPolicy: function (req, res, next) {
 
-            var newPolicy = new Policy({ name: req.body.name });
+            var newPolicy = new Policy({ name: req.body.name, testUrl: req.body.testUrl });
 
             newPolicy.save(function (err) {
                 if (err) return next(err);

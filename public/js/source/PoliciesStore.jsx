@@ -23,6 +23,8 @@ module.exports = Reflux.createStore({
         });
     },
 
+
+
     onAddPolicy: function (data) {
         $.ajax({
             type: "POST",

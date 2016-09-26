@@ -8,7 +8,7 @@ module.exports = React.createClass({
     editPolicy: function(e){
         e.preventDefault();
             ReactDOM.render(
-                    <EditPolicyForm policyName={this.props.policyName} policyId={this.props.policyId } />, document.getElementById('modal-body')
+                    <EditPolicyForm policyName={this.props.policyName} testUrl={this.props.testUrl} policyId={this.props.policyId } />, document.getElementById('modal-body')
                 );
         $('#modal-window').modal('show');
 

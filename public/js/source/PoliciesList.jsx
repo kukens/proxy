@@ -13,7 +13,7 @@ module.exports = React.createClass({
         var policyNodes = this.state.policies.map(function (policy) {
             return (
                         <li key={policy._id}>
-                              <EditPolicyLink policyId={policy._id} policyName={policy.name} />
+                              <EditPolicyLink policyId={policy._id} policyName={policy.name} testUrl={policy.testUrl} />
                               <PropertiesList policy={policy} />
                         </li>
                 );

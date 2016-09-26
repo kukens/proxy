@@ -8,11 +8,9 @@
 var debug = require('debug')('test2:server');
 var http = require('http');
 var app = require('../app');
+var webServer = require('../webServer.js');
 
 require('mongoose').connect('mongodb://localhost:2000/wptproxy');
-require('../proxyServer').init();
-require('../proxyAutoConfig').init();
-
 
 /**
  * Get port from environment and store in Express.
@@ -94,3 +92,9 @@ function onListening() {
 	  : 'port ' + addr.port;
 	debug('Listening on ' + bind);
 }
+
+
+global.runningTests = {};
+global.webServerAdress = '54.197.30.21';
+
+webServer.init();

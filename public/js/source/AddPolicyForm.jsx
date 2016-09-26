@@ -14,6 +14,10 @@ module.exports = React.createClass({
         this.setState({name: e.target.value});
     },
 
+    handleTestUrlChange: function (e) {
+        this.setState({ testUrl: e.target.value });
+    },
+
     getInitialState: function () {
         return { name: '' };
     },
@@ -31,8 +35,8 @@ module.exports = React.createClass({
                         <label htmlFor="name">Policy name:</label>
                         <input className="form-control" onChange={this.handleNameChange} id="alias" type="text" name="name" value={this.state.name} />
 
-                        <label htmlFor="name">Test URL:</label>
-                        <input className="form-control" onChange={this.handleNameChange} id="alias" type="text" name="testUrl" value={this.state.testUrl} />
+                        <label htmlFor="testUrl">Test URL:</label>
+                        <input className="form-control" onChange={this.handleTestUrlChange} id="alias" type="text" name="testUrl" value={this.state.testUrl} />
                     </fieldset>
                     </div>
 

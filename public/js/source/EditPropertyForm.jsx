@@ -74,7 +74,6 @@ module.exports = React.createClass({
                     <button onClick={this.updateProperty} type="button" id="update-property-btn" className="btn btn-primary">Submit</button>
                   </div>
             </form>
-
-                )
+        )
     }
 });
