@@ -50,7 +50,7 @@ TestModel.prototype.runTest = function (testRun) {
                 return 'setDns%09' + hostName + '%09' + global.webServerAdress + '%0A';
             });
 
-           var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + apiKey + '&runs=2&location=Dulles:Chrome&fvonly=1&ignoreSSL=1&bodies=1&script=' + dnsEntries.join() + '%0AaddHeader%09wptproxypolicy%3A%20' + this.policyId + '%0Anavigate%09' + encodeURIComponent(policy.testUrl) + '&ignoreSSL=1&f=json';
+           var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + apiKey + '&runs=2&location=Dulles:Chrome&fvonly=1&ignoreSSL=1&bodies=1&script=' + dnsEntries.join() + 'addHeader%09wptproxypolicy%3A%20' + this.policyId + '%0Anavigate%09' + encodeURIComponent(policy.testUrl) + '&ignoreSSL=1&f=json';
         }
 
         console.log(this.policyId + ' - ' + wptTestUrl);
