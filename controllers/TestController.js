@@ -34,7 +34,7 @@ module.exports = {
             });
         }
 
-        TestResult.find({ policyId: policyId }).sort({ testFinishedAt: 'desc' }).exec(function (err, results) {
+        TestResult.find({ policyId: policyId }).sort({ startDate: 'desc' }).exec(function (err, results) {
                 if (err) return next(err);
 
                 if (results) {
