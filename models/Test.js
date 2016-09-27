@@ -46,7 +46,7 @@ TestModel.prototype.runTest = function (testRun) {
                 hostNames.push(encodeURIComponent(policy.properties[i].url.match(/http[s]?:\/\/(.*?)($|\/.*)/)[1]));
             }
             hostNames.map(function (hostName) {
-                return 'setDns%09' + hostname + '%09' + global.webServerAdress + '%0A';
+                return 'setDns%09' + hostName + '%09' + global.webServerAdress + '%0A';
             });
 
             var dnsEntries = hostNames.join() + '%0A';
