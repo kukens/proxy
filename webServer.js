@@ -61,7 +61,7 @@ module.exports = {
 
         http.createServer(function (req, res) {
             findAndServeResponse(req, res);
-        }).listen(81);
+        }).listen(80);
 
         console.log('http server started');
 
