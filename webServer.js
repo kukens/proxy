@@ -3,12 +3,12 @@ var http = require("http");
 var Policy = require('./models/mongoose/PolicyModel');
 var fs = require('fs');
 
-function findAndServeResponse(reg, res) {
+function findAndServeResponse(req, res) {
     var fullUrl = 'http://' + req.headers.host + req.url;
 
     console.log(fullUrl);
 
-    Policy.findOne({ _id: req.headers.wptproxypolicy }, { "tests": 1 }).exec(function (err, record) {
+    Policy.findOne({ _id: req.headers.wptproxypolicy }, { "tests": 1 }).exec((err, record)=> {
 
         if (err) return console.log(err);
 
@@ -59,7 +59,7 @@ function findAndServeResponse(reg, res) {
 module.exports = {
     init: function () {
 
-        http.createServer(function (req, res) {
+        http.createServer((req, res)=> {
             findAndServeResponse(req, res);
         }).listen(80);
 
@@ -69,7 +69,7 @@ module.exports = {
             key: fs.readFileSync('server.key'),
             cert: fs.readFileSync('server.cert')
         }
-        , function (req, res) {
+        , (req, res)=> {
             findAndServeResponse(req, res);
         }).listen(443);
 
