@@ -68,7 +68,7 @@ TestModel.prototype.runTest = function (testRun) {
                 hostNames.push(encodeURIComponent(policy.properties[i].url.match(/http[s]?:\/\/(.*?)($|\/.*)/)[1]));
             }
 
-           var dnsEntries = hostNames.map(function (hostName) {
+           var dnsEntries = hostNames.map((hostName) => {
                return 'setDns%09' + hostName + '%09' + this.webServerIPAddress + '%0A';
             });
 
