@@ -6,6 +6,12 @@ var PropertyHeaderList = require('./PropertyHeaderList.jsx');
 
 module.exports = React.createClass({
 
+
+    getInitialState: function () {
+        return { url: '', body: '', ttfb: null };
+    },
+
+
     addProperty: function (e) {
 
         var data = $(e.target).closest("form").serializeArray();
@@ -21,9 +27,10 @@ module.exports = React.createClass({
         this.setState({body: e.target.value});
     },
 
-    getInitialState: function () {
-        return { url: '', body: ''};
+    handleTTFBChange: function (e) {
+        this.setState({ ttfb: e.target.value });
     },
+
 
     getDefaultProps: function() {
         return {
@@ -37,12 +44,6 @@ module.exports = React.createClass({
 
     render: function () {
 
-        var headersList = this.props.headers.map(function (header, index) {
-            return (
-                 <div></div>
-                );
-        }.bind(this));
-
         return (
             <form id="modal-form">
                   <div className="modal-header">
@@ -53,7 +54,10 @@ module.exports = React.createClass({
                 <fieldset>
                     <label htmlFor="url">URL to match:</label>
                     <input onChange={this.handleUrlChange} className="form-control" type="text" name="url" value={this.state.url} />
-                </fieldset>
+
+                      <label htmlFor="ttfb">TTFB to simulate (if blank then baseline values will be used):</label>
+                    <input onChange={this.handleTTFBChange} className="form-control" type="text" name="ttfb" value={this.state.ttfb} />
+               </fieldset>
                      <PropertyHeaderList headers={this.props.headers} />
 
                 <fieldset>

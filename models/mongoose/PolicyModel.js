@@ -4,6 +4,7 @@ propertySchema = new Schema({
     _id: { type: Schema.ObjectId, auto: true },
     url: String,
     body: String,
+    ttfb: Number,
     headers: [{ name: String, value: String }]
 });
 

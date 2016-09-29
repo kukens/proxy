@@ -23,6 +23,10 @@ module.exports = React.createClass({
         this.setState({ body: e.target.value });
     },
 
+    handleTTFBChange: function (e) {
+        this.setState({ ttfb: e.target.value });
+    },
+
     handleCloseForm: function () {
         PoliciesActions.fetchPolicies();
     },
@@ -30,14 +34,16 @@ module.exports = React.createClass({
     getInitialState: function () {
         return {
             url: this.props.property.url,
-            body: this.props.property.body
+            body: this.props.property.body,
+            ttfb: this.props.property.ttfb
         }
     },
 
     componentWillReceiveProps: function (nextProps) {
         this.setState({
             url: nextProps.property.url,
-            body: nextProps.property.body
+            body: nextProps.property.body,
+            ttfb: nextProps.property.ttfb
         });
     },
 
@@ -55,6 +61,9 @@ module.exports = React.createClass({
                 <fieldset>
                     <label htmlFor="url">URL to match:</label>
                     <input onChange={this.handleUrlChange} className="form-control" type="text" name="url" value={this.state.url} />
+
+                    <label htmlFor="ttfb">TTFB to simulate (if blank then baseline values will be used):</label>
+                    <input onChange={this.handleTTFBChange} className="form-control" type="text" name="ttfb" value={this.state.ttfb} />
                 </fieldset>
                 </div>
                      <PropertyHeaderList headers={this.props.property.headers} />

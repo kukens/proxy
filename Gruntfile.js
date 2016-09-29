@@ -35,7 +35,7 @@
                 tasks: ['browserify']
             },
             express: {
-                files: ['routes/*.js', 'controllers/*.js','models/*.js', '*.js'],
+                files: ['routes/*.js', 'controllers/*.js','models/**', '*.js'],
                 tasks: ['express:dev'],
                 options: {
                     spawn: false

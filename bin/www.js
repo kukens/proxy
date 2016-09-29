@@ -95,6 +95,5 @@ function onListening() {
 
 
 global.runningTests = {};
-global.webServerAdress = '54.197.30.21';
 
 webServer.init();

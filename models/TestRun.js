@@ -6,6 +6,7 @@ var userUrl;
 var jsonUrl;
 var finished;
 
+
 function TestRunModel(isBaseline) {
     
     this.statusText = 'Pending...';

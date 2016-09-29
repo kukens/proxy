@@ -16,14 +16,15 @@ module.exports = React.createClass({
                 url: "/test/status/" + this.props.policyId,
                 success: function (data) {
 
-                    if (Object.keys(data).length != 0) {
+                    if (data.performanceTest) {
                         this.setState({ test: data });
-
+                        console.log('dsds');
                         if (data.performanceTest.finished) {
                             clearInterval(interval);
                         }
                     }
                     else {
+                        this.setState({});
                         clearInterval(interval);
                     }
 
@@ -78,13 +79,14 @@ module.exports = React.createClass({
     render: function () {
 
         var testsFinishedBlock;
-        var testsInfo;
+        var testsInfo = <p>Loading...</p>;
         var runButtonDisabled = true;
 
         if (!this.state) {
             testsInfo = <p>Loading...</p>
         }
-        else if (this.state && this.state.test.length != 0) {
+
+       else  if (this.state.test) {
 
             if (this.state.test.performanceTest.finished) {
                 testsFinishedBlock = <p>Last test finished: {new Date(this.state.test.performanceTest.finished).toLocaleString()}</p>
@@ -111,8 +113,9 @@ module.exports = React.createClass({
               </div>
 
         }
-        else {
-            testsInfo = <p>No tests started...</p>
+        else{
+           testsInfo = <p>No tests started...</p>
+           runButtonDisabled = false;
         }
 
 

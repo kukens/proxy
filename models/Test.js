@@ -1,4 +1,5 @@
 var Policy = require('../models/mongoose/PolicyModel');
+var Settings = require('../models/mongoose/SettingsModel');
 var TestResult = require('../models/mongoose/TestResultModel');
 var TestRun = require('../models/TestRun');
 var https = require('https');
@@ -11,8 +12,15 @@ var startDate;
 var results;
 var numberOfRuns;
 
-var apiKey = 'A.4a3f5a1750da127ccc924d692a3a806a';
+var apiKey;
+var testsToRun;
+var webServerIPAddress;
+var testLocation;
+
+//var apiKey = 'A.4a3f5a1750da127ccc924d692a3a806a';
 //var apiKey = 'A.7f356743917964dd879378131da49b9f'
+
+//54.197.30.21
 
 function TestModel(policyId) {
     
@@ -25,7 +33,21 @@ function TestModel(policyId) {
     this.numberOfRuns = 0;
     this.results = new Array();
 
-   this.runTest(this.baselineTest);
+    Settings.findOne().exec((err, settings) => {
+
+        if (err || !settings) {
+            console.log(err || 'no settings defined');
+        }
+        else {
+            this.apiKey = settings.apiKey,
+            this.testsToRun = settings.numberOfRuns,
+            this.webServerIPAddress = settings.serverIP,
+            this.testLocation = settings.testLocation
+
+            this.runTest(this.baselineTest);
+        }
+    });
+ 
 }
 
 
@@ -34,10 +56,10 @@ TestModel.prototype.runTest = function (testRun) {
     testRun.statusText = 'Starting...';
 
     Policy.findOne({ '_id': this.policyId }).exec((err, policy) =>{
-        if (err) return res.json({ a: 'nie ma id' });
+        if (err) return console.log(err);
 
         if (!this.baselineTest.finished) {
-            var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + apiKey + '&runs=2&location=Dulles:Chrome&fvonly=1&ignoreSSL=1&bodies=1&script=navigate%09' + encodeURIComponent(policy.testUrl) + '&f=json';
+            var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + this.apiKey + '&runs=' + this.testsToRun + '&location=' + this.testLocation + '&fvonly=1&ignoreSSL=1&bodies=1&script=navigate%09' + encodeURIComponent(policy.testUrl) + '&f=json';
         }
         else {
             var hostNames = [];
@@ -47,10 +69,10 @@ TestModel.prototype.runTest = function (testRun) {
             }
 
            var dnsEntries = hostNames.map(function (hostName) {
-                return 'setDns%09' + hostName + '%09' + global.webServerAdress + '%0A';
+               return 'setDns%09' + hostName + '%09' + this.webServerIPAddress + '%0A';
             });
 
-           var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + apiKey + '&runs=2&location=Dulles:Chrome&fvonly=1&ignoreSSL=1&bodies=1&script=' + dnsEntries.join() + 'addHeader%09wptproxypolicy%3A%20' + this.policyId + '%0Anavigate%09' + encodeURIComponent(policy.testUrl) + '&ignoreSSL=1&f=json';
+           var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k='+ this.apiKey + '&runs=' + this.testsToRun + '&location=' + this.testLocation + '&fvonly=1&ignoreSSL=1&bodies=1&script=' + dnsEntries.join() + 'addHeader%09wptproxypolicy%3A%20' + this.policyId + '%0Anavigate%09' + encodeURIComponent(policy.testUrl) + '&ignoreSSL=1&appendua=%RUN%&f=json';
         }
 
         console.log(this.policyId + ' - ' + wptTestUrl);
@@ -212,6 +234,8 @@ TestModel.prototype.getResponses = function (request, response, responses, hits)
                 property.headers.forEach(function (item) {
                     response.headers[item.name] = item.value;
                 })
+
+                if (property.ttfb) response.ttfb = property.ttfb;
 
                 if (property.body != '') {
                     response.body = new Buffer(property.body);

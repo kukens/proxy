@@ -3,6 +3,7 @@ var router = express.Router();
 
 var PolicyController = require('../controllers/PolicyController');
 var TestController = require('../controllers/TestController');
+var SettingsController = require('../controllers/SettingsController');
 
 router.get('/', function(req, res, next) {
   res.render('index');
@@ -49,6 +50,14 @@ router.get('/test/results/*', function (req, res, next) {
 
 router.get('/test/cancel/*', function (req, res, next) {
     TestController.cancel(req, res, next);
+});
+
+router.get('/settings', function (req, res, next) {
+    SettingsController.get(req, res, next);
+});
+
+router.post('/settings', function (req, res, next) {
+    SettingsController.update(req, res, next);
 });
 
 
