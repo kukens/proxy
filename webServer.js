@@ -1,29 +1,31 @@
-﻿var https = require("https");
+﻿var https = require("https");0
 var http = require("http");
 var Policy = require('./models/mongoose/PolicyModel');
 var fs = require('fs');
 
-function findAndServeResponse(req, res) {
-    var fullUrl = 'http://' + req.headers.host + req.url;
+function findAndServeResponse(req, res, protocol) {
+    var fullUrl = protocol + '://' + req.headers.host + req.url;
 
-    console.log(fullUrl);
-
-    Policy.findOne({ _id: req.headers.wptproxypolicy }, { "tests": 1 }).exec((err, record)=> {
+    Policy.findOne({ _id: req.headers.wptproxypolicy }, { "tests": 1 },(err, record)=> {
 
         if (err) return console.log(err);
 
-        var testRun = parseInt(req.headers['user-agent'].match(/(.*\s)([1-9])(\/.*)/)[2]) || 1;
+        var testRunNumberMatch = req.headers['user-agent'].match(/(.*\s)([1-9])(\/.*)/);
 
-        var responses = record.tests[testRun-1]
+        var testRunNumber = testRunNumberMatch ? parseInt(testRunNumberMatch[2]) : 1;
+
+        var responses = record.tests[testRunNumber - 1]
 
         if (responses) {
 
             var match = false;
 
             for (var response in responses) {
-
+             //   console.log(responses[response].url + ' ' + fullUrl);
                 if (responses[response].url == fullUrl) {
                     match = true;
+
+                    console.log(responses[response].url + '--------------------------------------------------------- ' + fullUrl);
 
                     for (var header in responses[response].headers) {
                         res.setHeader(header, responses[response].headers[header]);
@@ -51,7 +53,6 @@ function findAndServeResponse(req, res) {
             res.end('no policy found');
         }
     });
-
 }
 
 
@@ -60,8 +61,8 @@ module.exports = {
     init: function () {
 
         http.createServer((req, res)=> {
-            findAndServeResponse(req, res);
-        }).listen(80);
+            findAndServeResponse(req, res, 'http');
+        }).listen(81);
 
         console.log('http server started');
 
@@ -70,7 +71,7 @@ module.exports = {
             cert: fs.readFileSync('server.cert')
         }
         , (req, res)=> {
-            findAndServeResponse(req, res);
+            findAndServeResponse(req, res, 'https');
         }).listen(443);
 
         console.log('https server started');
