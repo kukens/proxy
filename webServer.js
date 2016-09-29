@@ -18,34 +18,36 @@ function findAndServeResponse(req, res, protocol) {
         if (responses) {
 
             var match = false;
+            var responseObject;
 
             for (var response in responses) {
 
+                responseObject = responses[response];
                                 
-                if (responses[response].url == fullUrl) {
+                if (responseObject.url == fullUrl) {
                     match = true;
 
-                    console.log(response + ' - ' + responses[response].url + ' ' + fullUrl);
+                    console.log(response + ' - ' + responseObject.url + ' ' + fullUrl);
 
-                    for (var header in responses[response].headers) {
-                        res.setHeader(header, responses[response].headers[header]);
+                    for (var header in responseObject.headers) {
+                        res.setHeader(header, responseObject.headers[header]);
                     }
 
-                    res.headers = responses[response].headers;
+                    res.headers = responseObject.headers;
 
-                    res.statusCode = responses[response].responseCode;
+                    res.statusCode = responseObject.responseCode;
 
-                    setTimeout(function (res, responses, response) {
-                        if (res.headers['Content-Encoding'] == 'gzip') {
-                            require('zlib').gzip(responses[response].body.buffer, function (_, result) {
-                                res.setHeader('Content-Length', result.length);
-                                res.end(result);
+                    setTimeout(function () {
+                        if (this.res.headers['Content-Encoding'] == 'gzip') {
+                            require('zlib').gzip(this.responseObject.body.buffer, (_, result) => {
+                                this.res.setHeader('Content-Length', result.length);
+                                this.res.end(result);
                             });
                         }
                         else {
-                            res.end(responses[response].body.buffer);
+                            this.res.end(this.responseObject.body.buffer);
                         }
-                    }(res, responses, response), responses[response].ttfb);
+                    }.bind({ res: res, responseObject: responseObject }), responseObject.ttfb);
                 }
             }
 
