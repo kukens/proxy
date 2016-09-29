@@ -20,10 +20,12 @@ function findAndServeResponse(req, res, protocol) {
             var match = false;
 
             for (var response in responses) {
-                //   console.log(responses[response].url + ' ' + fullUrl);
+
+                                
                 if (responses[response].url == fullUrl) {
                     match = true;
 
+                    console.log(response + ' - ' + responses[response].url + ' ' + fullUrl);
 
                     for (var header in responses[response].headers) {
                         res.setHeader(header, responses[response].headers[header]);
@@ -32,7 +34,6 @@ function findAndServeResponse(req, res, protocol) {
                     res.headers = responses[response].headers;
 
                     res.statusCode = responses[response].responseCode;
-
 
                     setTimeout(function (res, responses, response) {
                         if (res.headers['Content-Encoding'] == 'gzip') {
@@ -45,7 +46,6 @@ function findAndServeResponse(req, res, protocol) {
                             res.end(responses[response].body.buffer);
                         }
                     }(res, responses, response), responses[response].ttfb);
-
                 }
             }
 
@@ -64,7 +64,7 @@ module.exports = {
 
         http.createServer((req, res) => {
             findAndServeResponse(req, res, 'http');
-        }).listen(81);
+        }).listen(80);
 
         console.log('http server started');
 
