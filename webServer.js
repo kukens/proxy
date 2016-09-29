@@ -10,50 +10,57 @@ function findAndServeResponse(req, res, protocol) {
 
         if (err) return console.log(err);
 
-        var testRunNumberMatch = req.headers['user-agent'].match(/(.*\s)([1-9])(\/.*)/);
-        var testRunNumber = testRunNumberMatch ? parseInt(testRunNumberMatch[2]) : 1;
+        if (record) {
+            var testRunNumberMatch = req.headers['user-agent'].match(/(.*\s)([1-9])(\/.*)/);
+            var testRunNumber = testRunNumberMatch ? parseInt(testRunNumberMatch[2]) : 1;
 
-        var responses = record.tests[testRunNumber - 1]
+            var responses = record.tests[testRunNumber - 1]
 
-        if (responses) {
+            if (responses) {
 
-            var match = false;
-            var responseObject;
+                var match = false;
+                var responseObject;
 
-            for (var response in responses) {
+                for (var response in responses) {
 
-                responseObject = responses[response];
-                                
-                if (responseObject.url == fullUrl) {
-                    match = true;
+                    responseObject = responses[response];
 
-                    console.log(response + ' - ' + responseObject.url + ' ' + fullUrl);
+                    if (responseObject.url == fullUrl) {
+                        match = true;
 
-                    for (var header in responseObject.headers) {
-                        res.setHeader(header, responseObject.headers[header]);
+                        console.log(response + ' - ' + responseObject.url + ' ' + fullUrl);
+
+                        for (var header in responseObject.headers) {
+                            res.setHeader(header, responseObject.headers[header]);
+                        }
+
+                        res.headers = responseObject.headers;
+
+                        res.statusCode = responseObject.responseCode;
+
+                        setTimeout(function () {
+                            if (this.res.headers['Content-Encoding'] == 'gzip') {
+                                require('zlib').gzip(this.responseObject.body.buffer, (_, result) => {
+                                    this.res.setHeader('Content-Length', result.length);
+                                    this.res.end(result);
+                                });
+                            }
+                            else {
+                                this.res.end(this.responseObject.body.buffer);
+                            }
+                        }.bind({ res: res, responseObject: responseObject }), responseObject.ttfb);
                     }
-
-                    res.headers = responseObject.headers;
-
-                    res.statusCode = responseObject.responseCode;
-
-                    setTimeout(function () {
-                        if (this.res.headers['Content-Encoding'] == 'gzip') {
-                            require('zlib').gzip(this.responseObject.body.buffer, (_, result) => {
-                                this.res.setHeader('Content-Length', result.length);
-                                this.res.end(result);
-                            });
-                        }
-                        else {
-                            this.res.end(this.responseObject.body.buffer);
-                        }
-                    }.bind({ res: res, responseObject: responseObject }), responseObject.ttfb);
                 }
-            }
 
-            if (!match) res.end('could not provide a response');
+                if (!match) res.end('could not provide a response');
+            }
+            else {
+                console.log('no test responses found');
+                res.end('no test responses found');
+            }
         }
         else {
+            console.log('no policy found: ' + req.headers.wptproxypolicy + ' ' + fullUrl);
             res.end('no policy found');
         }
     });
