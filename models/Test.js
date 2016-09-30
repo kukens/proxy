@@ -59,7 +59,7 @@ TestModel.prototype.runTest = function (testRun) {
         if (err) return console.log(err);
 
         if (!this.baselineTest.finished) {
-            var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + this.apiKey + '&runs=' + this.testsToRun + '&location=' + this.testLocation + '&fvonly=1&ignoreSSL=1&bodies=1&script=navigate%09' + encodeURIComponent(policy.testUrl) + '&f=json';
+            var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + this.apiKey + '&runs=' + this.testsToRun + '&location=' + this.testLocation + '&video=1&mv=1&medianMetric=speedIndex&fvonly=1&ignoreSSL=1&bodies=1&script=navigate%09' + encodeURIComponent(policy.testUrl) + '&f=json';
         }
         else {
             var hostNames = [];
@@ -72,7 +72,7 @@ TestModel.prototype.runTest = function (testRun) {
                return 'setDns%09' + hostName + '%09' + this.webServerIPAddress + '%0A';
             });
 
-           var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k='+ this.apiKey + '&runs=' + this.testsToRun + '&location=' + this.testLocation + '&fvonly=1&ignoreSSL=1&bodies=1&script=' + dnsEntries.join('') + 'addHeader%09wptproxypolicy%3A%20' + this.policyId + '%0Anavigate%09' + encodeURIComponent(policy.testUrl) + '&ignoreSSL=1&appendua=%RUN%&f=json';
+           var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + this.apiKey + '&runs=' + this.testsToRun + '&location=' + this.testLocation + '&video=1&mv=1&medianMetric=speedIndex&fvonly=1&ignoreSSL=1&bodies=1&script=' + dnsEntries.join('') + 'addHeader%09wptproxypolicy%3A%20' + this.policyId + '%0Anavigate%09' + encodeURIComponent(policy.testUrl) + '&ignoreSSL=1&appendua=%RUN%&f=json';
         }
 
         console.log(this.policyId + ' - ' + wptTestUrl);
