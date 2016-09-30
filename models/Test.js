@@ -72,7 +72,7 @@ TestModel.prototype.runTest = function (testRun) {
                return 'setDns%09' + hostName + '%09' + this.webServerIPAddress + '%0A';
             });
 
-           var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k='+ this.apiKey + '&runs=' + this.testsToRun + '&location=' + this.testLocation + '&fvonly=1&ignoreSSL=1&bodies=1&script=' + dnsEntries.join() + 'addHeader%09wptproxypolicy%3A%20' + this.policyId + '%0Anavigate%09' + encodeURIComponent(policy.testUrl) + '&ignoreSSL=1&appendua=%RUN%&f=json';
+           var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k='+ this.apiKey + '&runs=' + this.testsToRun + '&location=' + this.testLocation + '&fvonly=1&ignoreSSL=1&bodies=1&script=' + dnsEntries.join('') + 'addHeader%09wptproxypolicy%3A%20' + this.policyId + '%0Anavigate%09' + encodeURIComponent(policy.testUrl) + '&ignoreSSL=1&appendua=%RUN%&f=json';
         }
 
         console.log(this.policyId + ' - ' + wptTestUrl);
