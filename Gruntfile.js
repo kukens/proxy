@@ -4,7 +4,7 @@
         browserify: {
             dev: {
                 options: {
-                    transform: [['babelify', { presets: ['react'] }]]
+                    transform: [['babelify', { presets: ['react', 'es2015'] }]]
                 },
                 src: ['public/js/source/app.jsx'],
                 dest: 'public/js/app.js'
@@ -31,11 +31,11 @@
                 tasks: ['less']
             },
             scripts: {
-                files: ['public/**/*.jsx'],
+                files: ['public/js/source/**/*.jsx'],
                 tasks: ['browserify']
             },
             express: {
-                files: ['routes/*.js', 'controllers/*.js','models/**', '*.js'],
+                files: ['routes/*.js', 'controllers/*.js','models/**', 'config/**', 'helpers/**', '*.js'],
                 tasks: ['express:dev'],
                 options: {
                     spawn: false

@@ -1,79 +1,74 @@
-var Policy = require('../models/mongoose/PolicyModel');
 var TestResult = require('../models/mongoose/TestResultModel');
 var Test = require('../models/Test');
 
-var matchPolicyId = function (req) {
-    return req.path.match(/\/test\/.*\/([a-z0-9]{24})/)[1];
+var matchSessionId = function (req) {
+    return req.path.match(/\/tests\/.*\/([a-z0-9]{24})/)[1];
 }
 
 module.exports = {
     run: function (req, res, next) {
 
-        var policyId = matchPolicyId(req);
+        var sessionId = matchSessionId(req);
 
-        if (!global.runningTests[policyId]) {
-            var test = new Test(policyId);
-            global.runningTests[policyId] = test;
+        if (!global.runningSessions[sessionId]) {
+            var test = new Test(sessionId);
+            global.runningSessions[sessionId] = test;
         }
 
-        return res.end();
+        res.end();
         },
 
     status: function (req, res, next) {
 
-        var policyId = matchPolicyId(req);
+        var sessionId = matchSessionId(req);
 
-        var runningTest = global.runningTests[policyId];
-
-        if (runningTest)
+        if (global.runningSessions[sessionId])
         {
             return res.json({
-                startDate: runningTest.startDate,
-                baselineTest: runningTest.baselineTest,
-                performanceTest: runningTest.performanceTest
+                startDate: global.runningSessions[sessionId].startDate,
+                baselineTest: global.runningSessions[sessionId].baselineTest,
+                performanceTest: global.runningSessions[sessionId].performanceTest
             });
         }
 
-        TestResult.find({ policyId: policyId }).sort({ startDate: 'desc' }).exec(function (err, results) {
-                if (err) return next(err);
+        TestResult.find({ sessionId: sessionId }).sort({ startDate: 'desc' }).exec() 
+        .then((result)=> {
+            if (results) {
+                console.log(results[0]);
+                var lastTest = results[0];
 
-                if (results) {
-                    console.log(results[0]);
-                    var lastTest = results[0];
-
-                    if (lastTest) {
-                        return res.json({
-                            startDate: lastTest.startDate,
-                            baselineTest: lastTest.baselineTest,
-                            performanceTest: lastTest.performanceTest
-                        });
-                    }
+                if (lastTest) {
+                    return res.json({
+                        startDate: lastTest.startDate,
+                        baselineTest: lastTest.baselineTest,
+                        performanceTest: lastTest.performanceTest
+                    });
                 }
-
-                    return res.json({});
-            });
-
+            }
+            return res.json({});
+        })
+        .catch((err)=> next(err))
     },
-    
+
+ 
            cancel: function (req, res, next) {
 
-               var policyId = matchPolicyId(req);
+               var sessionId = matchSessionId(req);
 
-               if (global.runningTests[policyId]) {
-                   delete global.runningTests[policyId];
-
+               if (global.runningSessions[sessionId]) {
+                   delete global.runningSessions[sessionId];
                }
 
                return res.end();
            },
 
-           results: function (req, res, next) {
-               var policyId = matchPolicyId(req);
+           history: function (req, res, next) {
 
-               TestResult.find({ policyId: policyId }).sort({ startDate: 'desc' }).exec(function (err, results) {
-                   if (err) return next(err);
-                   return res.json(results);
-               });
+               var sessionId = matchSessionId(req);
+
+               TestResult.find({ sessionId: sessionId }).sort({ startDate: 'desc' }).exec()
+               .then((results)=> res.json(results))
+               .catch((err) => next(err));
            }
            
 

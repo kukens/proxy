@@ -1,9 +1,6 @@
 ﻿var React = require('react');
 var ReactDOM = require('react-dom');
 
-var PoliciesList = require('./PoliciesList.jsx');
-var PoliciesActions = require('./PoliciesActions.jsx');
-
 module.exports = React.createClass({
 
     getInitialState: function () {
@@ -19,32 +16,32 @@ module.exports = React.createClass({
 
     },
 
-    componentDidMount: function()
+    componentWillMount: function()
     {
         $.ajax({
             type: "GET",
             url: "/settings",
-            success: function (data) {
-                if (data) {
-                    this.setState({
+            success: (data)=> {
+                this.setState({
                         numberOfRuns: data.numberOfRuns,
                         testLocation: data.testLocation,
                         apiKey: data.apiKey,
                         serverIP: data.serverIP
                     });
+                },
+                error: () => {
+                    this.setState({ errorMessage: 'Unable to fetch admin settings' });
                 }
-            }.bind(this)
-        });
+            });
     },
 
-   handleNumberOfRunsChange: function (e) {
+    handleNumberOfRunsChange: function (e) {
         this.setState({ numberOfRuns: e.target.value });
     },
 
     handleTestLocationChange: function (e) {
         this.setState({ testLocation: e.target.value });
     },
-
 
     handleApiKeyChange: function (e) {
         this.setState({ apiKey: e.target.value });
@@ -54,7 +51,7 @@ module.exports = React.createClass({
         this.setState({ serverIP: e.target.value });
     },
 
-    
+
     updateSettings: function (e) {
         var data = $(e.target).closest("form").serializeArray();
 
@@ -62,20 +59,28 @@ module.exports = React.createClass({
             type: "POST",
             url: "/settings",
             data: data,
-            success: function (data) {
-                this.setState({
-                    numberOfRuns: data.numberOfRuns,
-                    testLocation: data.testLocation,
-                    apiKey: data.apiKey,
-                    serverIP: data.serverIP,
-                });
-                $('#modal-window').modal('hide');
-            }.bind(this)
+            success: () => {
+                this.setState({ successMessage: 'Settings updated sucessfully' });
+                setTimeout(() => {
+                    $('#modal-window').modal('hide');
+                }, 1000)
+            },
+            error: () => {
+                this.setState({ errorMessage: 'Error ocurred' });
+            }
         });
     },
 
 
     render: function () {
+
+        var message
+
+        if (this.state.successMessage) {
+            var message = <div className="alert alert-success" role="alert">{this.state.successMessage}</div>
+        } else if (this.state.errorMessage) {
+            var message = <div className="alert alert-warning" role="alert">{this.state.errorMessage}</div>
+        }
 
         return (
             <form id="modal-form">
@@ -102,8 +107,9 @@ module.exports = React.createClass({
 
                     <div className="modal-footer">
                         <button type="button" className="btn btn-default" data-dismiss="modal">Cancel</button>
-                        <button onClick={this.updateSettings} type="button" id="update-policy-btn" className="btn btn-primary">Submit</button>
+                        <button onClick={this.updateSettings} type="button" id="update-test-btn" className="btn btn-primary">Submit</button>
                     </div>
+                {message}
             </form>
                 )
     }

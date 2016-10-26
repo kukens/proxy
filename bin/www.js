@@ -10,8 +10,6 @@ var http = require('http');
 var app = require('../app');
 var webServer = require('../webServer.js');
 
-require('mongoose').connect('mongodb://localhost:2000/wptproxy');
-
 /**
  * Get port from environment and store in Express.
  */
@@ -94,6 +92,6 @@ function onListening() {
 }
 
 
-global.runningTests = {};
+global.runningSessions = {};
 
 webServer.init();

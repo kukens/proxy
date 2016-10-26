@@ -1,11 +1,11 @@
-var Policy = require('../models/mongoose/PolicyModel');
+var Session = require('../models/mongoose/SessionModel');
 var Settings = require('../models/mongoose/SettingsModel');
 var TestResult = require('../models/mongoose/TestResultModel');
 var TestRun = require('../models/TestRun');
 var https = require('https');
 var http = require("http");
 
-var policyId;
+var sessionId;
 var baselineTest;
 var performanceTest;
 var startDate;
@@ -22,9 +22,9 @@ var testLocation;
 
 //54.197.30.21
 
-function TestModel(policyId) {
+function TestModel(sessionId) {
     
-    this.policyId = policyId;
+    this.sessionId = sessionId;
     this.startDate = new Date().toISOString();
 
     this.baselineTest = new TestRun(true);
@@ -55,27 +55,27 @@ TestModel.prototype.runTest = function (testRun) {
 
     testRun.statusText = 'Starting...';
 
-    Policy.findOne({ '_id': this.policyId }).exec((err, policy) =>{
+    Session.findOne({ '_id': this.sessionId }).exec((err, session) =>{
         if (err) return console.log(err);
 
         if (!this.baselineTest.finished) {
-            var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + this.apiKey + '&runs=' + this.testsToRun + '&location=' + this.testLocation + '&video=1&mv=1&medianMetric=speedIndex&fvonly=1&ignoreSSL=1&bodies=1&script=navigate%09' + encodeURIComponent(policy.testUrl) + '&f=json';
+            var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + this.apiKey + '&runs=' + this.testsToRun + '&location=' + this.testLocation + '&video=1&medianMetric=SpeedIndex&fvonly=1&ignoreSSL=1&bodies=1&script=navigate%09' + encodeURIComponent(session.testUrl) + '&f=json';
         }
         else {
             var hostNames = [];
 
-            for (i = 0; i < policy.properties.length; i++) {
-                hostNames.push(encodeURIComponent(policy.properties[i].url.match(/http[s]?:\/\/(.*?)($|\/.*)/)[1]));
+            for (i = 0; i < session.rules.length; i++) {
+                hostNames.push(encodeURIComponent(session.rules[i].url.match(/http[s]?:\/\/(.*?)($|\/.*)/)[1]));
             }
 
            var dnsEntries = hostNames.map((hostName) => {
                return 'setDns%09' + hostName + '%09' + this.webServerIPAddress + '%0A';
             });
 
-           var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + this.apiKey + '&runs=' + this.testsToRun + '&location=' + this.testLocation + '&video=1&mv=1&medianMetric=speedIndex&fvonly=1&ignoreSSL=1&bodies=1&script=' + dnsEntries.join('') + 'addHeader%09wptproxypolicy%3A%20' + this.policyId + '%0Anavigate%09' + encodeURIComponent(policy.testUrl) + '&ignoreSSL=1&appendua=%RUN%&f=json';
+           var wptTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + this.apiKey + '&runs=' + this.testsToRun + '&location=' + this.testLocation + '&video=1&medianMetric=SpeedIndex&fvonly=1&ignoreSSL=1&bodies=1&script=' + dnsEntries.join('') + 'addHeader%09wptproxysession%3A%20' + this.sessionId + '%0Anavigate%09' + encodeURIComponent(session.testUrl) + '&ignoreSSL=1&appendua=%RUN%&f=json';
         }
 
-        console.log(this.policyId + ' - ' + wptTestUrl);
+        console.log(this.sessionId + ' - ' + wptTestUrl);
         
         https.get(wptTestUrl, (res)=> {
             var body = '';
@@ -102,7 +102,7 @@ TestModel.prototype.getResults = function (testRun) {
         var responseObject = {};
 
         https.get(testRun.jsonUrl, (res)=> {
-            console.log(this.policyId + ' - Requesting ' + testRun.jsonUrl);
+            console.log(this.sessionId + ' - Requesting ' + testRun.jsonUrl);
 
             res.on('data', (chunk) => {
                 body += chunk;
@@ -110,7 +110,7 @@ TestModel.prototype.getResults = function (testRun) {
             res.on('end', ()=> {
                 responseObject = JSON.parse(body);
                 testRun.statusText = responseObject.statusText;
-                console.log(this.policyId + ' - '  + testRun.statusText);
+                console.log(this.sessionId + ' - '  + testRun.statusText);
 
                 if (responseObject.statusCode == 200 && !testRun.finished) {
 
@@ -127,10 +127,10 @@ TestModel.prototype.getResults = function (testRun) {
                         }
 
                         else {
-                            console.log(this.policyId + ' -------------------- Test finished ----------------------');
+                            console.log(this.sessionId + ' -------------------- Test finished ----------------------');
 
                             var testResult = new TestResult({
-                                policyId: this.policyId,
+                                sessionId: this.sessionId,
                                 baselineTest: this.baselineTest,
                                 performanceTest: this.performanceTest,
                                 startDate: this.startDate,
@@ -138,7 +138,7 @@ TestModel.prototype.getResults = function (testRun) {
 
                             testResult.save((err) => {
                                 if (err) console.log(err);
-                                delete global.runningTests[this.policyId];
+                                delete global.runningTests[this.sessionId];
                             });
                         }
                         
@@ -152,17 +152,17 @@ TestModel.prototype.getResults = function (testRun) {
 
 
 TestModel.prototype.getResponsesForPerformanceTest = function () {
-    Policy.findOne({ _id: this.policyId }).exec((err, match) => {
+    Session.findOne({ _id: this.sessionId }).exec((err, match) => {
 
         hostNames = [];
-        var hostNAmesRegex = '';
+        var hostNamesRegex = '';
 
-        for (i = 0; i < match.properties.length; i++) {
-            hostNames.push(match.properties[i].url.match(/http[s]?:\/\/(.*?)($|\/.*)/)[1]);
+        for (i = 0; i < match.rules.length; i++) {
+            hostNames.push(match.rules[i].url.match(/http[s]?:\/\/(.*?)($|\/.*)/)[1]);
         }
 
-        var hostNAmesRegex = Array.from(new Set(hostNames)).join('|');
-        console.log('hostNameRegex: ' + hostNAmesRegex);
+        var hostNamesRegex = Array.from(new Set(hostNames)).join('|');
+        console.log('hostNameRegex: ' + hostNamesRegex);
 
         https.get(this.baselineTest.jsonUrl, (res)=> {
             var body = '';
@@ -184,7 +184,7 @@ TestModel.prototype.getResponsesForPerformanceTest = function () {
                     for (var item in responseObject.data.runs[run].firstView.requests) {
                         // console.log(request.headers['host']);
                         var request = responseObject.data.runs[run].firstView.requests[item];
-                        if (request.host.match(hostNAmesRegex)) hits++;
+                        if (request.host.match(hostNamesRegex)) hits++;
                     }
 
                     console.log('run "' + run + '" hostname hits: ' + hits);
@@ -193,7 +193,7 @@ TestModel.prototype.getResponsesForPerformanceTest = function () {
                         for (var item in responseObject.data.runs[run].firstView.requests) {
                             var request = responseObject.data.runs[run].firstView.requests[item];
 
-                            if (request.host.match(hostNAmesRegex)) {
+                            if (request.host.match(hostNamesRegex)) {
 
                                 var response = {};
 
@@ -219,26 +219,26 @@ TestModel.prototype.getResponsesForPerformanceTest = function () {
 
 
 TestModel.prototype.getResponses = function (request, response, responses, hits) {
-    Policy.findOne({ _id: this.policyId, 'properties.url': request.full_url }, { "properties.$": 1, _id: 0 },  (err, match) => {
+    Session.findOne({ _id: this.sessionId, 'rules.url': request.full_url }, { "rules.$": 1, _id: 0 },  (err, match) => {
 
         if (err) return console.error(err);
-        if (match && match.properties) {
+        if (match && match.rules) {
 
-            var property = match.properties[0];
+            var rule = match.rules[0];
 
             console.log(request.full_url);
-            console.log(property.url);
+            console.log(rule.url);
 
-            if (request.full_url == property.url) {
+            if (request.full_url == rule.url) {
 
-                property.headers.forEach(function (item) {
+                rule.headers.forEach(function (item) {
                     response.headers[item.name] = item.value;
                 })
 
-                if (property.ttfb) response.ttfb = property.ttfb;
+                if (rule.ttfb) response.ttfb = rule.ttfb;
 
-                if (property.body != '') {
-                    response.body = new Buffer(property.body);
+                if (rule.body != '') {
+                    response.body = new Buffer(rule.body);
 
                     responses.push(response);
 
@@ -304,9 +304,9 @@ TestModel.prototype.getBaselineResponse = function (request, response, responses
 
 TestModel.prototype.saveResponsesAndRunPerformanceTest = function ()
 {
-    Policy.update({ _id: this.policyId }, { tests: this.results }, (err, updated)=> {
+    Session.update({ _id: this.sessionId }, { tests: this.results }, (err, updated)=> {
         if (err) return console.log(err);
-        console.log(this.policyId + ' ------------- Policy updated with baseline responses ---------------');
+        console.log(this.sessionId + ' ------------- Session updated with baseline responses ---------------');
 
         this.runTest(this.performanceTest, false);
     });

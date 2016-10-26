@@ -1,65 +1,21 @@
 var express = require('express');
 var router = express.Router();
+var isLoggedIn = require('../helpers/routes.js').isLoggedIn;
+var isAdmin = require('../helpers/routes.js').isAdmin;
 
-var PolicyController = require('../controllers/PolicyController');
-var TestController = require('../controllers/TestController');
-var SettingsController = require('../controllers/SettingsController');
-
-router.get('/', function(req, res, next) {
-  res.render('index');
+router.get('/', function (req, res, next) {
+    if (req.user) res.redirect('/home');
+    else res.render('index');
 });
 
-router.post('/policies/*/properties/*', function(req, res, next) {
-    PolicyController.editProperty(req, res, next);
+router.get('/register', isAdmin, function (req, res, next) {
+    res.render('register');
 });
 
-router.post('/policies/*/properties', function (req, res, next) {
-    PolicyController.addProperty(req, res, next);
-});
 
-router.delete('/policies/*/properties/*', function (req, res, next) {
-    PolicyController.deleteProperty(req, res, next);
+router.get('/home', isLoggedIn, function (req, res, next) {
+    res.render('home');
 });
-
-router.get('/policies', function(req, res, next) {
-    PolicyController.getPolicies(req, res, next);
-});
-
-router.post('/policies/*', function(req, res, next) {
-    PolicyController.editPolicy(req, res, next);
-});
-
-router.post('/policies', function (req, res, next) {
-    PolicyController.addPolicy(req, res, next);
-});
-
-router.delete('/policies/*', function(req, res, next) {
-    PolicyController.deletePolicy(req, res, next);
-});
-
-router.get('/test/run/*', function (req, res, next) {
-    TestController.run(req, res, next);
-});
-
-router.get('/test/status/*', function (req, res, next) {
-    TestController.status(req, res, next);
-});
-router.get('/test/results/*', function (req, res, next) {
-    TestController.results(req, res, next);
-});
-
-router.get('/test/cancel/*', function (req, res, next) {
-    TestController.cancel(req, res, next);
-});
-
-router.get('/settings', function (req, res, next) {
-    SettingsController.get(req, res, next);
-});
-
-router.post('/settings', function (req, res, next) {
-    SettingsController.update(req, res, next);
-});
-
 
 
 module.exports = router;

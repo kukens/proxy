@@ -29,11 +29,7 @@ module.exports = React.createClass({
                 );
         });
 
-
-        return (
-             <form id="modal-form">
-
-                      <table className="table table-hover">
+        var table =  <table className="table table-hover">
                       <thead>
                       <tr>
                       <th rowSpan='2'>Test finished at</th>
@@ -50,11 +46,19 @@ module.exports = React.createClass({
                          <tbody>{tableBody}</tbody>
                       </table>
 
+        this.props.results[0] ? formInnerBlock = table : formInnerBlock = <p>No test results found.</p>;
+
+
+        return (
+             <form id="modal-form">
+                  <div className="modal-body">
+                      {formInnerBlock}
+                      </div>
                 <div className="modal-footer">
                         <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
 
                 </div>
-                                </form>
+</form>
                 )
     }
 });

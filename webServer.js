@@ -1,12 +1,12 @@
 ﻿var https = require("https"); 0
 var http = require("http");
-var Policy = require('./models/mongoose/PolicyModel');
+var Session = require('./models/mongoose/SessionModel');
 var fs = require('fs');
 
 function findAndServeResponse(req, res, protocol) {
     var fullUrl = protocol + '://' + req.headers.host + req.url;
 
-    Policy.findOne({ _id: req.headers.wptproxypolicy }, { "tests": 1 }, (err, record) => {
+    Session.findOne({ _id: req.headers.wptproxysession }, { "tests": 1 }, (err, record) => {
 
         if (err) return console.log(err);
 
@@ -60,8 +60,8 @@ function findAndServeResponse(req, res, protocol) {
             }
         }
         else {
-            console.log('no policy found: ' + req.headers.wptproxypolicy + ' ' + fullUrl);
-            res.end('no policy found');
+            console.log('no session found: ' + req.headers.wptproxysession + ' ' + fullUrl);
+            res.end('no session found');
         }
     });
 }
@@ -73,7 +73,7 @@ module.exports = {
 
         http.createServer((req, res) => {
             findAndServeResponse(req, res, 'http');
-        }).listen(80);
+        }).listen(81);
 
         console.log('http server started');
 

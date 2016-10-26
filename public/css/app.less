@@ -1,15 +1,14 @@
-ul#policies-list{
+ul#sessions-list{
     padding-left:0px;
     margin:0;
     > li {
         border:1px solid #efefef;
-        padding:20px;
         margin:15px 0;
         background: rgb(248, 248, 248);
         list-style: none;
 
         &:hover{
-        background: #efefef;
+        border:1px solid #bbb;
         }
         > a{
 
@@ -22,13 +21,14 @@ ul#policies-list{
     }
 }
 
-.propertiesList{
-    .add-property-btn{
+.rulesList{
+    padding:15px;
+    .add-rule-btn{
         margin:10px 0 0 0;
     }
 }
 
-#delete-property-btn{
+#delete-rule-btn{
 
     float:left;
 }
@@ -46,8 +46,8 @@ ul#policies-list{
         margin-bottom:10px;
     }
 
-#policies-container{
-    border-bottom: 1px #efefef solid;
+#sessions-container{
+    border-bottom: 1px #eee solid;
     margin-bottom: 15px;
 }
 
@@ -59,3 +59,52 @@ h3,h4{
     margin-top:0px;
 
 }
+
+#sessions{
+     border-top: 1px #eee solid;
+
+}
+
+.user-profile{
+    margin-top:10px;
+    margin-bottom:10px;
+
+    a{
+        margin:0px 20px;
+    }
+
+    .logged-as{
+        margin-right:20px;
+    }
+}
+
+.tests-summary{
+    padding:15px;
+    button{
+        margin-right:5px;
+    }
+}
+
+.session-summary{
+
+    background:#95a5a6;
+    color:#fff;
+   padding:15px;
+   font-size:1.1em;
+   a{
+       color: #2c3e50;
+
+   }
+}
+
+textarea, input
+{
+    &:invalid{
+        border:1px solid red;
+    }
+
+    &:invalid:focus{
+        border:1px solid red;
+    }
+}
+

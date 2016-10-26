@@ -1,7 +1,7 @@
 ﻿var React = require('react');
 var ReactDOM = require('react-dom');
 
-var TestsResults = require('./TestsResults.jsx');
+var TestHistory = require('./TestHistory.jsx');
 
 module.exports = React.createClass({
 
@@ -13,7 +13,7 @@ module.exports = React.createClass({
         var interval = setInterval(() => {
             $.ajax({
                 type: "GET",
-                url: "/test/status/" + this.props.policyId,
+                url: "/tests/status/" + this.props.sessionId,
                 success: function (data) {
 
                     if (data.performanceTest) {
@@ -36,10 +36,10 @@ module.exports = React.createClass({
     showResults: function () {
         $.ajax({
             type: "GET",
-            url: "/test/results/" + this.props.policyId,
+            url: "/tests/history/" + this.props.sessionId,
             success: function (data) {
                 ReactDOM.render(
-                    <TestsResults results={data} />, document.getElementById('modal-body')
+                    <TestHistory results={data} />, document.getElementById('modal-body')
                 );
 
                 $('#modal-window').modal('show');
@@ -55,7 +55,7 @@ module.exports = React.createClass({
 
         $.ajax({
             type: "GET",
-            url: "/test/run/" + this.props.policyId,
+            url: "/tests/run/" + this.props.sessionId,
             success: function () {
                 this.getTestStatus();
             }.bind(this)
@@ -67,7 +67,7 @@ module.exports = React.createClass({
         e.preventDefault();
         $.ajax({
             type: "GET",
-            url: "/test/cancel/" + this.props.policyId,
+            url: "/tests/cancel/" + this.props.sessionId,
             success: function () {
                 this.getTestStatus();
             }.bind(this)
@@ -86,29 +86,29 @@ module.exports = React.createClass({
             testsInfo = <p>Loading...</p>
         }
 
-       else  if (this.state.test) {
+       else  if (this.state.session) {
 
-            if (this.state.test.performanceTest.finished) {
-                testsFinishedBlock = <p>Last test finished: {new Date(this.state.test.performanceTest.finished).toLocaleString()}</p>
+            if (this.state.session.performanceTest.finished) {
+                testsFinishedBlock = <p>Last test finished: {new Date(this.state.session.performanceTest.finished).toLocaleString()}</p>
             } else {
-                testsFinishedBlock = <p>Test started: {new Date(this.state.test.startDate).toLocaleString()} | <a href='#' onClick={this.cancelTest}>Cancel test</a></p>
+                testsFinishedBlock = <p>Test started: {new Date(this.state.session.startDate).toLocaleString()} | <a href='#' onClick={this.cancelTest}>Cancel test</a></p>
             }
 
-            runButtonDisabled = this.state.test.performanceTest.finished ? false : true;
+            runButtonDisabled = this.state.session.performanceTest.finished ? false : true;
 
-            var baselineSpeedindex = this.state.test.baselineTest.speedIndex ? <span> - Speed Index: {this.state.test.baselineTest.speedIndex}</span> : <br />;
-            var performanceSpeedindex = this.state.test.performanceTest.speedIndex ? <span> - Speed Index: {this.state.test.performanceTest.speedIndex}</span> : <br />;
+            var baselineSpeedindex = this.state.session.baselineTest.speedIndex ? <span> - Speed Index: {this.state.session.baselineTest.speedIndex}</span> : <br />;
+            var performanceSpeedindex = this.state.session.performanceTest.speedIndex ? <span> - Speed Index: {this.state.session.performanceTest.speedIndex}</span> : <br />;
 
-            var baselineTestLink = this.state.test.baselineTest.userUrl ? <a target='_blank' href={this.state.test.baselineTest.userUrl }>{this.state.test.baselineTest.testId}</a> : '';
-            var performanceTestLink = this.state.test.performanceTest.userUrl ? <a target="_blank" href={this.state.test.performanceTest.userUrl }>{this.state.test.performanceTest.testId}</a> : '';
+            var baselineTestLink = this.state.session.baselineTest.userUrl ? <a target='_blank' href={this.state.session.baselineTest.userUrl }>{this.state.session.baselineTest.testId}</a> : '';
+            var performanceTestLink = this.state.session.performanceTest.userUrl ? <a target="_blank" href={this.state.session.performanceTest.userUrl }>{this.state.session.performanceTest.testId}</a> : '';
 
             testsInfo =
               <div className="tests-runing">
                  <p>
-                     Baseline test: {this.state.test.baselineTest.statusText}  <br />{baselineTestLink} {baselineSpeedindex}
+                     Baseline test: {this.state.session.baselineTest.statusText}  <br />{baselineTestLink} {baselineSpeedindex}
                  </p>
               <p>
-                  Performance test: {this.state.test.performanceTest.statusText}<br />{performanceTestLink} {performanceSpeedindex}
+                  Performance test: {this.state.session.performanceTest.statusText}<br />{performanceTestLink} {performanceSpeedindex}
               </p>
               </div>
 
@@ -121,13 +121,13 @@ module.exports = React.createClass({
 
         return (
             <div className='tests-summary'>
-
+                <h4>Tests summary:</h4>
                 {testsFinishedBlock}
                 {testsInfo}
 
-                <button type="button" disabled={runButtonDisabled} onClick={this.runTest} className="btn btn-primary">Launch test</button>
+                <button type="button" disabled={runButtonDisabled} onClick={this.runTest} className="btn btn-sm btn-primary">Launch test</button>
 
-                 <button type="button" onClick={this.showResults} className="btn btn-primary">Show test results</button>
+                 <button type="button" onClick={this.showResults} className="btn btn-sm btn-primary">Show test history</button>
             </div>
                 )
     }
