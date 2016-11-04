@@ -7,10 +7,9 @@ var jsonUrl;
 var finished;
 
 
-function TestRunModel(isBaseline) {
+function TestRunModel() {
     
     this.statusText = 'Pending...';
-    this.baseline = isBaseline;
     this.speedIndex = null;
     this.testId = '';
     this.userUrl = '';

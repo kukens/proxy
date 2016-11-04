@@ -2,7 +2,7 @@ var TestResult = require('../models/mongoose/TestResultModel');
 var Test = require('../models/Test');
 
 var matchSessionId = function (req) {
-    return req.path.match(/\/tests\/.*\/([a-z0-9]{24})/)[1];
+    return req.path.match(/\/.*\/([a-z0-9]{24})/)[1];
 }
 
 module.exports = {
@@ -32,11 +32,9 @@ module.exports = {
         }
 
         TestResult.find({ sessionId: sessionId }).sort({ startDate: 'desc' }).exec() 
-        .then((result)=> {
-            if (results) {
-                console.log(results[0]);
+        .then((results) => {
+                if (results) {
                 var lastTest = results[0];
-
                 if (lastTest) {
                     return res.json({
                         startDate: lastTest.startDate,
@@ -49,8 +47,7 @@ module.exports = {
         })
         .catch((err)=> next(err))
     },
-
- 
+     
            cancel: function (req, res, next) {
 
                var sessionId = matchSessionId(req);

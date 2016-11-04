@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded( {limit: "50mb", extended: true}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({ secret: 'wpt-proxy-324r9384fujf' })); // session secret
-
+app.disable('etag');
 require('./config/passport')(passport);
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions

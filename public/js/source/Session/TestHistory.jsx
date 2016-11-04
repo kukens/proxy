@@ -46,6 +46,8 @@ module.exports = React.createClass({
                          <tbody>{tableBody}</tbody>
                       </table>
 
+
+                               var formInnerBlock;
         this.props.results[0] ? formInnerBlock = table : formInnerBlock = <p>No test results found.</p>;
 
 

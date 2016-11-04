@@ -181,6 +181,7 @@ module.exports = React.createClass({
         }
 
         return (
+
              <form id="modal-form" ref={(c) => this._form = c}>
                 {modalHeader}
                 <div className="modal-body">

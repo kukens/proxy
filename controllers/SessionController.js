@@ -13,9 +13,19 @@ module.exports = {
 
     getSessions: function (req, res, next) {
 
-        Session.find({ user: req.user.local.email}, { tests: 0 }).exec()
-        .then((records) => res.json(records))
-        .catch((err) => next(err))
+        if (req.query.filter) {
+            Session.find({ user: req.user.local.email, testUrl: req.query.filter }, { tests: 0 }).exec()
+            .then((records) => res.json(records))
+            .catch((err) => next(err))
+        }
+        else
+        {
+            Session.find({ user: req.user.local.email}, { tests: 0 }).exec()
+       .then((records) => res.json(records))
+       .catch((err) => next(err))
+
+
+        }
     },
 
     editSession: function (req, res, next) {

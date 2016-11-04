@@ -1,16 +1,16 @@
-﻿var https = require("https"); 0
+﻿var https = require("http2");
 var http = require("http");
 var Session = require('./models/mongoose/SessionModel');
 var fs = require('fs');
 
 function findAndServeResponse(req, res, protocol) {
+
     var fullUrl = protocol + '://' + req.headers.host + req.url;
-
-    Session.findOne({ _id: req.headers.wptproxysession }, { "tests": 1 }, (err, record) => {
-
-        if (err) return console.log(err);
-
+    
+    Session.findOne({ _id: req.headers.wptproxysession }, { "tests": 1 }).exec()
+    .then(record=> {
         if (record) {
+
             var testRunNumberMatch = req.headers['user-agent'].match(/(.*\s)([1-9])(\/.*)/);
             var testRunNumber = testRunNumberMatch ? parseInt(testRunNumberMatch[2]) : 1;
 
@@ -29,41 +29,32 @@ function findAndServeResponse(req, res, protocol) {
                         match = true;
 
                         console.log(response + ' - ' + responseObject.url + ' ' + fullUrl);
-
+                       
                         for (var header in responseObject.headers) {
-                            res.setHeader(header, responseObject.headers[header]);
+                            if (header != 'transfer-encoding' && header != 'connection') res.setHeader(header, responseObject.headers[header]);
                         }
-
-                        res.headers = responseObject.headers;
 
                         res.statusCode = responseObject.responseCode;
 
                         setTimeout(function () {
-                            if (this.res.headers['Content-Encoding'] == 'gzip') {
-                                require('zlib').gzip(this.responseObject.body.buffer, (_, result) => {
-                                    this.res.setHeader('Content-Length', result.length);
-                                    this.res.end(result);
-                                });
-                            }
-                            else {
-                                this.res.end(this.responseObject.body.buffer);
-                            }
+                              return this.res.end(this.responseObject.body.buffer);
                         }.bind({ res: res, responseObject: responseObject }), responseObject.ttfb);
                     }
                 }
 
-                if (!match) res.end('could not provide a response');
+                if (!match) return res.end('could not provide a response');
             }
             else {
                 console.log('no test responses found');
-                res.end('no test responses found');
+                return res.end('no test responses found');
             }
         }
         else {
             console.log('no session found: ' + req.headers.wptproxysession + ' ' + fullUrl);
-            res.end('no session found');
+            return res.end('no session found');
         }
-    });
+    })
+    .catch(e=> console.log(e))
 }
 
 
@@ -73,7 +64,7 @@ module.exports = {
 
         http.createServer((req, res) => {
             findAndServeResponse(req, res, 'http');
-        }).listen(81);
+        }).listen(80);
 
         console.log('http server started');
 
@@ -86,8 +77,5 @@ module.exports = {
         }).listen(443);
 
         console.log('https server started');
-
-
     }
-
 }

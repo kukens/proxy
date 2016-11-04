@@ -90,16 +90,16 @@ module.exports = React.createClass({
                 <div className="modal-body">
                     <fieldset>
                         <label htmlFor="numberOfRuns">Number of runs per test:</label>
-                        <input className="form-control" onChange={this.handleNumberOfRunsChange} id="alias" type="text" name="numberOfRuns" value={this.state.numberOfRuns} />
+                        <input pattern="[1-9]" className="form-control" onChange={this.handleNumberOfRunsChange} id="alias" type="text" name="numberOfRuns" value={this.state.numberOfRuns} />
 
                         <label htmlFor="testLocation">WPT test location:</label>
-                        <input className="form-control" onChange={this.handleTestLocationChange} id="testUrl" type="text" name="testLocation" value={this.state.testLocation} />
+                        <input className="form-control" required onChange={this.handleTestLocationChange} id="testUrl" type="text" name="testLocation" value={this.state.testLocation} />
 
                         <label htmlFor="apiKey">WPT API key:</label>
-                        <input className="form-control" onChange={this.handleApiKeyChange} id="testUrl" type="text" name="apiKey" value={this.state.apiKey} />
+                        <input className="form-control" required onChange={this.handleApiKeyChange} id="testUrl" type="text" name="apiKey" value={this.state.apiKey} />
 
                          <label htmlFor="serverIP">Web server IP address:</label>
-                        <input className="form-control" onChange={this.handleServerIPChange} id="testUrl" type="text" name="serverIP" value={this.state.serverIP} />
+                        <input pattern='^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$' className="form-control" required onChange={this.handleServerIPChange} id="testUrl" type="text" name="serverIP" value={this.state.serverIP} />
 
 
                     </fieldset>

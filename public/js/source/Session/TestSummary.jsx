@@ -18,7 +18,6 @@ module.exports = React.createClass({
 
                     if (data.performanceTest) {
                         this.setState({ test: data });
-                        console.log('dsds');
                         if (data.performanceTest.finished) {
                             clearInterval(interval);
                         }
@@ -54,8 +53,8 @@ module.exports = React.createClass({
         e.target.disabled = true;
 
         $.ajax({
-            type: "GET",
-            url: "/tests/run/" + this.props.sessionId,
+            type: "POST",
+            url: "/tests/" + this.props.sessionId,
             success: function () {
                 this.getTestStatus();
             }.bind(this)
@@ -66,8 +65,8 @@ module.exports = React.createClass({
     cancelTest: function (e) {
         e.preventDefault();
         $.ajax({
-            type: "GET",
-            url: "/tests/cancel/" + this.props.sessionId,
+            type: "DELETE",
+            url: "/tests/" + this.props.sessionId,
             success: function () {
                 this.getTestStatus();
             }.bind(this)
@@ -86,29 +85,29 @@ module.exports = React.createClass({
             testsInfo = <p>Loading...</p>
         }
 
-       else  if (this.state.session) {
+       else  if (this.state.test) {
 
-            if (this.state.session.performanceTest.finished) {
-                testsFinishedBlock = <p>Last test finished: {new Date(this.state.session.performanceTest.finished).toLocaleString()}</p>
+            if (this.state.test.performanceTest.finished) {
+                testsFinishedBlock = <p>Last test finished: {new Date(this.state.test.performanceTest.finished).toLocaleString()}</p>
             } else {
-                testsFinishedBlock = <p>Test started: {new Date(this.state.session.startDate).toLocaleString()} | <a href='#' onClick={this.cancelTest}>Cancel test</a></p>
+                testsFinishedBlock = <p>Test started: {new Date(this.state.test.startDate).toLocaleString()} | <a href='#' onClick={this.cancelTest}>Cancel test</a></p>
             }
 
-            runButtonDisabled = this.state.session.performanceTest.finished ? false : true;
+            runButtonDisabled = this.state.test.performanceTest.finished ? false : true;
 
-            var baselineSpeedindex = this.state.session.baselineTest.speedIndex ? <span> - Speed Index: {this.state.session.baselineTest.speedIndex}</span> : <br />;
-            var performanceSpeedindex = this.state.session.performanceTest.speedIndex ? <span> - Speed Index: {this.state.session.performanceTest.speedIndex}</span> : <br />;
+            var baselineSpeedindex = this.state.test.baselineTest.speedIndex ? <span> - Speed Index: {this.state.test.baselineTest.speedIndex}</span> : <br />;
+            var performanceSpeedindex = this.state.test.performanceTest.speedIndex ? <span> - Speed Index: {this.state.test.performanceTest.speedIndex}</span> : <br />;
 
-            var baselineTestLink = this.state.session.baselineTest.userUrl ? <a target='_blank' href={this.state.session.baselineTest.userUrl }>{this.state.session.baselineTest.testId}</a> : '';
-            var performanceTestLink = this.state.session.performanceTest.userUrl ? <a target="_blank" href={this.state.session.performanceTest.userUrl }>{this.state.session.performanceTest.testId}</a> : '';
+            var baselineTestLink = this.state.test.baselineTest.userUrl ? <a target='_blank' href={this.state.test.baselineTest.userUrl }>{this.state.test.baselineTest.testId}</a> : '';
+            var performanceTestLink = this.state.test.performanceTest.userUrl ? <a target="_blank" href={this.state.test.performanceTest.userUrl }>{this.state.test.performanceTest.testId}</a> : '';
 
             testsInfo =
               <div className="tests-runing">
                  <p>
-                     Baseline test: {this.state.session.baselineTest.statusText}  <br />{baselineTestLink} {baselineSpeedindex}
+                     Baseline test: {this.state.test.baselineTest.statusText}  <br />{baselineTestLink} {baselineSpeedindex}
                  </p>
               <p>
-                  Performance test: {this.state.session.performanceTest.statusText}<br />{performanceTestLink} {performanceSpeedindex}
+                  Performance test: {this.state.test.performanceTest.statusText}<br />{performanceTestLink} {performanceSpeedindex}
               </p>
               </div>
 
