@@ -46,7 +46,7 @@ function TestModel(sessionId) {
         }
 
         var dnsEntries = hostNames.map((hostName) => {
-            return 'setDns%09' + encodeURIComponent(hostName) + '%09' + encodeURIComponent(settings.webServerIPAddress) + '%0A';
+            return 'setDns%09' + encodeURIComponent(hostName) + '%09' + encodeURIComponent(settings.serverIP) + '%0A';
         });
 
         this.wptPerfTestUrl = 'https://www.webpagetest.org/runtest.php?k=' + settings.apiKey + '&runs=' + settings.numberOfRuns + '&location=' + settings.testLocation + '&video=1&medianMetric=SpeedIndex&fvonly=1&ignoreSSL=1&bodies=1&script=' + dnsEntries.join('') + 'addHeader%09wptproxysession%3A%20' + this.sessionId + '%0Anavigate%09' + encodeURIComponent(session.testUrl) + '&ignoreSSL=1&appendua=%RUN%&f=json';
