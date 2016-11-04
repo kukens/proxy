@@ -5,7 +5,7 @@ var isAdmin = require('../helpers/routes.js').isAdmin;
 
 var UserController = require('../controllers/UserController');
 
-router.post('/user/register', isAdmin, function (req, res, next) {
+router.post('/user/register', function (req, res, next) {
     UserController.register(req, res, next);
 });
 
