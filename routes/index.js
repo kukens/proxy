@@ -8,7 +8,7 @@ router.get('/', function (req, res, next) {
     else res.render('index');
 });
 
-router.get('/register', isAdmin, function (req, res, next) {
+router.get('/register', function (req, res, next) {
     res.render('register');
 });
 
