@@ -3,6 +3,20 @@ var http = require("http");
 var Session = require('./models/mongoose/SessionModel');
 var fs = require('fs');
 
+
+
+function sendResponse(res, responseObject)
+{
+    setTimeout(()=> {
+        for (var header in responseObject.headers) {
+            if (header != 'transfer-encoding' && header != 'connection') res.setHeader(header, responseObject.headers[header]);
+        }
+
+        res.statusCode = responseObject.responseCode;
+        return this.res.end(this.responseObject.body.buffer);
+    }, responseObject.ttfb);
+}
+
 function findAndServeResponse(req, res, protocol) {
 
     var fullUrl = protocol + '://' + req.headers.host + req.url;
@@ -30,14 +44,7 @@ function findAndServeResponse(req, res, protocol) {
 
                         console.log(response + ' - ' + responseObject.url + ' ' + fullUrl);
                        
-                        setTimeout(function () {
-                            for (var header in responseObject.headers) {
-                                if (header != 'transfer-encoding' && header != 'connection') res.setHeader(header, responseObject.headers[header]);
-                            }
-
-                            res.statusCode = responseObject.responseCode;
-                              return this.res.end(this.responseObject.body.buffer);
-                        }.bind({ res: res, responseObject: responseObject }), responseObject.ttfb);
+                        return sendResponse(res, responseObject)
                     }
                 }
 
