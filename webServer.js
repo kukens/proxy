@@ -1,4 +1,4 @@
-﻿var https = require("http2");
+﻿var https = require("https");
 var http = require("http");
 var Session = require('./models/mongoose/SessionModel');
 var fs = require('fs');
