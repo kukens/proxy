@@ -185,7 +185,7 @@ TestModel.prototype.requestPromise = function (requestUrl, bodyAsBuffer=false, u
                 response.path = request.url;
                 response.headers = normalizeHeaders(request.headers.response);
                 response.bodyUrl = request.body_url ? 'https://www.webpagetest.org' + request.body_url : request.full_url;
-                response.responseCode = request.responseCode;
+                response.responseCode = request.responseCode == -2? 200: request.responseCode;
                 response.ttfb = request.ttfb_ms;
                 response.contentDownload = request.download_ms;
 
