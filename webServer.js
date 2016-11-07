@@ -13,8 +13,7 @@ function findAndServeResponse(req, res, protocol) {
 
             var testRunNumberMatch = req.headers['user-agent'].match(/(.*\s)([1-9])(\/.*)/);
             var testRunNumber = testRunNumberMatch ? parseInt(testRunNumberMatch[2]) : 1;
-            res.statusCode = 404;
-
+           
             var responses = record.tests[testRunNumber - 1]
 
             if (responses) {
@@ -43,13 +42,18 @@ function findAndServeResponse(req, res, protocol) {
                     }
                 }
 
-                if (!match) return res.end('could not provide a response');
+                if (!match) {
+                    res.statusCode = 404;
+                    return res.end('could not provide a response');
+                }
             }
             else {
+                res.statusCode = 404;
                 return res.end('no test responses found');
             }
         }
         else {
+            res.statusCode = 404;
             return res.end('no session found');
         }
     })
