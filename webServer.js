@@ -13,6 +13,7 @@ function findAndServeResponse(req, res, protocol) {
 
             var testRunNumberMatch = req.headers['user-agent'].match(/(.*\s)([1-9])(\/.*)/);
             var testRunNumber = testRunNumberMatch ? parseInt(testRunNumberMatch[2]) : 1;
+            res.statusCode = 404;
 
             var responses = record.tests[testRunNumber - 1]
 
@@ -45,12 +46,10 @@ function findAndServeResponse(req, res, protocol) {
                 if (!match) return res.end('could not provide a response');
             }
             else {
-                console.log('no test responses found');
                 return res.end('no test responses found');
             }
         }
         else {
-            console.log('no session found: ' + req.headers.wptproxysession + ' ' + fullUrl);
             return res.end('no session found');
         }
     })
@@ -64,7 +63,9 @@ module.exports = {
 
         http.createServer((req, res) => {
             findAndServeResponse(req, res, 'http');
-        }).listen(80);
+        }).listen(80).on('error', (e) => {
+            console.log(`Got error: ${e.message}`);
+        });;
 
         console.log('http server started');
 
@@ -74,7 +75,9 @@ module.exports = {
         }
         , (req, res) => {
             findAndServeResponse(req, res, 'https');
-        }).listen(443);
+        }).listen(443).on('error', (e) => {
+            console.log(`Got error: ${e.message}`);
+        });;
 
         console.log('https server started');
     }
