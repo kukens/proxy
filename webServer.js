@@ -13,7 +13,7 @@ function sendResponse(res, responseObject)
         }
 
         res.statusCode = responseObject.responseCode;
-        return res.end(this.responseObject.body.buffer);
+        return res.end(responseObject.body.buffer);
     }, responseObject.ttfb);
 }
 
