@@ -30,13 +30,12 @@ function findAndServeResponse(req, res, protocol) {
 
                         console.log(response + ' - ' + responseObject.url + ' ' + fullUrl);
                        
-                        for (var header in responseObject.headers) {
-                            if (header != 'transfer-encoding' && header != 'connection') res.setHeader(header, responseObject.headers[header]);
-                        }
-
-                        res.statusCode = responseObject.responseCode;
-
                         setTimeout(function () {
+                            for (var header in responseObject.headers) {
+                                if (header != 'transfer-encoding' && header != 'connection') res.setHeader(header, responseObject.headers[header]);
+                            }
+
+                            res.statusCode = responseObject.responseCode;
                               return this.res.end(this.responseObject.body.buffer);
                         }.bind({ res: res, responseObject: responseObject }), responseObject.ttfb);
                     }
